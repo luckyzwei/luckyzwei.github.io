@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xiaomanbaba.top</id>
     <title>开发日记</title>
-    <updated>2020-02-26T01:57:23.068Z</updated>
+    <updated>2020-03-12T07:08:47.882Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xiaomanbaba.top"/>
     <link rel="self" href="https://xiaomanbaba.top/atom.xml"/>
@@ -10,6 +10,74 @@
     <logo>https://xiaomanbaba.top/images/avatar.png</logo>
     <icon>https://xiaomanbaba.top/favicon.ico</icon>
     <rights>All rights reserved 2020, 开发日记</rights>
+    <entry>
+        <title type="html"><![CDATA[this 一直指向前一个对象]]></title>
+        <id>https://xiaomanbaba.top/post/this-yi-zhi-zhi-xiang-qian-yi-ge-dui-xiang/</id>
+        <link href="https://xiaomanbaba.top/post/this-yi-zhi-zhi-xiang-qian-yi-ge-dui-xiang/">
+        </link>
+        <updated>2020-03-12T07:00:54.000Z</updated>
+        <content type="html"><![CDATA[<p>在使用了react-native-admob插件之后，第二次始终是指向前面的一个this对象。 调试了蛮久，发现是因为我每次调用广告的时候都会addListener，然后插件其实会存起来。<br>
+首先我们应该调用<br>
+removeAllListeners();</p>
+<pre><code>if (global.loadingReward) {
+  console.log('正在加载广告，跳过!!!');
+  return;
+}
+this.hasRecv = false;
+console.log('开始加载广告!!!');
+global.loadingReward = true;
+AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
+//AdMobRewarded.setAdUnitID('ca-app-pub-9280092940596395/3561826862');
+AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+AdMobRewarded.removeAllListeners();
+AdMobRewarded.addEventListener('rewarded', reward =&gt; {
+  if (this.hasRecv){
+    return;
+  }
+  this.hasRecv = true;
+  console.log('AdMobRewarded =&gt; rewarded', reward);
+  global.loadingReward = false;
+  successCallback();
+});
+AdMobRewarded.addEventListener('adFailedToLoad', error =&gt; {
+  global.loadingReward = false;
+  console.log('failed:', error);
+  errorCallback();
+});
+AdMobRewarded.addEventListener('adClosed', ()=&gt;{
+  console.log('adClosed!!!');
+  if(global.loadingReward == false){
+    return;
+  }
+  global.loadingReward = false;
+  errorCallback();
+})
+AdMobRewarded.requestAd()
+  .then(() =&gt; AdMobRewarded.showAd())
+  .catch(error =&gt; {
+    global.loadingReward = false;
+    console.log('failed:', error);
+    errorCallback();
+  });</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[React Native Reanimated]]></title>
+        <id>https://xiaomanbaba.top/post/react-native-reanimated/</id>
+        <link href="https://xiaomanbaba.top/post/react-native-reanimated/">
+        </link>
+        <updated>2020-02-29T06:32:45.000Z</updated>
+        <content type="html"><![CDATA[<p>用RN 自带的animation做的动作转盘的动画比较卡，所以看了一下React Native Reanimated的文档。<br>
+官网为：https://software-mansion.github.io/react-native-reanimated/index.html</p>
+<p>上面介绍说这是React Native Animated库的重新实现。<br>
+有下面几个好处：</p>
+<ol>
+<li>Native的性能：在JS中定义动画，但是在Native线程中跑</li>
+<li>精确的动画：API提供了对动画更高的精度和更详细的控制</li>
+<li>(大部分)后向兼容：如果您一直使用React Native的API。您不需要做任何更改</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello，World]]></title>
         <id>https://xiaomanbaba.top/post/helloworld/</id>
