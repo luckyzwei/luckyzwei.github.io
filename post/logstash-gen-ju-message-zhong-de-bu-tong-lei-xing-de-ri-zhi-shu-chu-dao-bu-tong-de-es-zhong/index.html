@@ -1,22 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://xiaomanbaba.top</id>
-    <title>开发日记</title>
-    <updated>2020-04-02T02:13:45.626Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://xiaomanbaba.top"/>
-    <link rel="self" href="https://xiaomanbaba.top/atom.xml"/>
-    <subtitle>思绪随风飘，散落在这里</subtitle>
-    <logo>https://xiaomanbaba.top/images/avatar.png</logo>
-    <icon>https://xiaomanbaba.top/favicon.ico</icon>
-    <rights>All rights reserved 2020, 开发日记</rights>
-    <entry>
-        <title type="html"><![CDATA[logstash根据message中的不同类型的日志输出到不同的es中]]></title>
-        <id>https://xiaomanbaba.top/post/logstash-gen-ju-message-zhong-de-bu-tong-lei-xing-de-ri-zhi-shu-chu-dao-bu-tong-de-es-zhong/</id>
-        <link href="https://xiaomanbaba.top/post/logstash-gen-ju-message-zhong-de-bu-tong-lei-xing-de-ri-zhi-shu-chu-dao-bu-tong-de-es-zhong/">
-        </link>
-        <updated>2020-04-01T03:31:24.000Z</updated>
-        <content type="html"><![CDATA[<p>当我们从beats输入数据后，然后通过grok把需要的字段抽取出来，然后输出到es中，下面是简单的一个配置文件<br>
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>logstash根据message中的不同类型的日志输出到不同的es中 | 开发日记</title>
+<link rel="shortcut icon" href="https://xiaomanbaba.top/favicon.ico?v=1585793571742">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xiaomanbaba.top/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="logstash根据message中的不同类型的日志输出到不同的es中 | 开发日记 - Atom Feed" href="https://xiaomanbaba.top/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="当我们从beats输入数据后，然后通过grok把需要的字段抽取出来，然后输出到es中，下面是简单的一个配置文件
+input {
+beats {
+port =&gt; &quot;5044&quot;
+}
+}
+filter {
+grok {
+..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xiaomanbaba.top">
+  <img class="avatar" src="https://xiaomanbaba.top/images/avatar.png?v=1585793571742" alt="">
+  </a>
+  <h1 class="site-title">
+    开发日记
+  </h1>
+  <p class="site-description">
+    思绪随风飘，散落在这里
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              logstash根据message中的不同类型的日志输出到不同的es中
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-04-01
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>当我们从beats输入数据后，然后通过grok把需要的字段抽取出来，然后输出到es中，下面是简单的一个配置文件<br>
 input {<br>
 beats {<br>
 port =&gt; &quot;5044&quot;<br>
@@ -134,83 +214,85 @@ stdout { codec =&gt; rubydebug }
 <h1 id="source-clientip-2">source =&gt; &quot;clientip&quot;</h1>
 <h1 id="-2">}</h1>
 <p>#https://www.elastic.co/guide/en/logstash/current/advanced-pipeline.html</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[this 一直指向前一个对象]]></title>
-        <id>https://xiaomanbaba.top/post/this-yi-zhi-zhi-xiang-qian-yi-ge-dui-xiang/</id>
-        <link href="https://xiaomanbaba.top/post/this-yi-zhi-zhi-xiang-qian-yi-ge-dui-xiang/">
-        </link>
-        <updated>2020-03-12T07:00:54.000Z</updated>
-        <content type="html"><![CDATA[<p>在使用了react-native-admob插件之后，第二次始终是指向前面的一个this对象。 调试了蛮久，发现是因为我每次调用广告的时候都会addListener，然后插件其实会存起来。<br>
-首先我们应该调用<br>
-removeAllListeners();</p>
-<pre><code>if (global.loadingReward) {
-  console.log('正在加载广告，跳过!!!');
-  return;
-}
-this.hasRecv = false;
-console.log('开始加载广告!!!');
-global.loadingReward = true;
-AdMobRewarded.setTestDevices([AdMobRewarded.simulatorId]);
-//AdMobRewarded.setAdUnitID('ca-app-pub-9280092940596395/3561826862');
-AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
-AdMobRewarded.removeAllListeners();
-AdMobRewarded.addEventListener('rewarded', reward =&gt; {
-  if (this.hasRecv){
-    return;
-  }
-  this.hasRecv = true;
-  console.log('AdMobRewarded =&gt; rewarded', reward);
-  global.loadingReward = false;
-  successCallback();
-});
-AdMobRewarded.addEventListener('adFailedToLoad', error =&gt; {
-  global.loadingReward = false;
-  console.log('failed:', error);
-  errorCallback();
-});
-AdMobRewarded.addEventListener('adClosed', ()=&gt;{
-  console.log('adClosed!!!');
-  if(global.loadingReward == false){
-    return;
-  }
-  global.loadingReward = false;
-  errorCallback();
-})
-AdMobRewarded.requestAd()
-  .then(() =&gt; AdMobRewarded.showAd())
-  .catch(error =&gt; {
-    global.loadingReward = false;
-    console.log('failed:', error);
-    errorCallback();
-  });</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[React Native Reanimated]]></title>
-        <id>https://xiaomanbaba.top/post/react-native-reanimated/</id>
-        <link href="https://xiaomanbaba.top/post/react-native-reanimated/">
-        </link>
-        <updated>2020-02-29T06:32:45.000Z</updated>
-        <content type="html"><![CDATA[<p>用RN 自带的animation做的动作转盘的动画比较卡，所以看了一下React Native Reanimated的文档。<br>
-官网为：https://software-mansion.github.io/react-native-reanimated/index.html</p>
-<p>上面介绍说这是React Native Animated库的重新实现。<br>
-有下面几个好处：</p>
-<ol>
-<li>Native的性能：在JS中定义动画，但是在Native线程中跑</li>
-<li>精确的动画：API提供了对动画更高的精度和更详细的控制</li>
-<li>(大部分)后向兼容：如果您一直使用React Native的API。您不需要做任何更改</li>
-</ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello，World]]></title>
-        <id>https://xiaomanbaba.top/post/helloworld/</id>
-        <link href="https://xiaomanbaba.top/post/helloworld/">
-        </link>
-        <updated>2020-02-25T04:11:48.000Z</updated>
-        <content type="html"><![CDATA[<p>hello,world!!!</p>
-]]></content>
-    </entry>
-</feed>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#geoip">geoip {</a></li>
+<li><a href="#source-clientip">source =&gt; &quot;clientip&quot;</a></li>
+<li><a href="#">}</a></li>
+<li><a href="#geoip-2">geoip {</a></li>
+<li><a href="#source-clientip-2">source =&gt; &quot;clientip&quot;</a></li>
+<li><a href="#-2">}</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xiaomanbaba.top/post/this-yi-zhi-zhi-xiang-qian-yi-ge-dui-xiang/">
+              <h3 class="post-title">
+                this 一直指向前一个对象
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://xiaomanbaba.top/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
