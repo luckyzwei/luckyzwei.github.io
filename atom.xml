@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xiaomanbaba.top</id>
     <title>开发日记</title>
-    <updated>2020-04-02T02:13:45.626Z</updated>
+    <updated>2020-04-07T09:33:37.744Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xiaomanbaba.top"/>
     <link rel="self" href="https://xiaomanbaba.top/atom.xml"/>
@@ -10,6 +10,410 @@
     <logo>https://xiaomanbaba.top/images/avatar.png</logo>
     <icon>https://xiaomanbaba.top/favicon.ico</icon>
     <rights>All rights reserved 2020, 开发日记</rights>
+    <entry>
+        <title type="html"><![CDATA[es创建索引]]></title>
+        <id>https://xiaomanbaba.top/post/es-chuang-jian-suo-yin/</id>
+        <link href="https://xiaomanbaba.top/post/es-chuang-jian-suo-yin/">
+        </link>
+        <updated>2020-04-02T02:36:04.000Z</updated>
+        <content type="html"><![CDATA[<p>前面使用filebeats收集日志</p>
+<p>然后发送到logstash来清洗日志</p>
+<p>最后发送到es的索引中。</p>
+<p>这里我们看看如何创建索引。<br>
+实例：</p>
+<p>PUT users<br>
+{<br>
+&quot;mappings&quot;: {<br>
+&quot;properties&quot;:{<br>
+&quot;name&quot;:{<br>
+&quot;type&quot;:&quot;text&quot;<br>
+},<br>
+&quot;user_name&quot;:{<br>
+&quot;type&quot;: &quot;keyword&quot;<br>
+},<br>
+&quot;email&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>上面创建了一个users的索引。但是我们这里不会单独的创建一个索引，因为单个索引数据量太大会导致检索查询的性能问题，所以我们按照时间序列来生成索引，所以我们创建索引模板。<br>
+PUT _template/template_1<br>
+{</p>
+<p>&quot;index_patterns&quot;: [&quot;ubi*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:1<br>
+},<br>
+&quot;mappings&quot;:{</p>
+<pre><code>  &quot;properties&quot;:{
+    
+    &quot;host_name&quot;:{
+      &quot;type&quot;:&quot;keyword&quot;
+    },
+    &quot;created_at&quot;:{
+      &quot;type&quot;:&quot;date&quot;,
+      &quot;format&quot;:&quot;&quot;
+    }
+  }
+</code></pre>
+<p>}<br>
+}<br>
+这样生成了一个template_1的索引模板，有两个字段 host_name created_at。</p>
+<p>到我们这个业务统计来说，我们生成几个索引模板，分别为:<br>
+reg-*<br>
+login-*<br>
+output-*<br>
+cardlevelup-*<br>
+newrecharge-*<br>
+PUT _template/reg-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;reg-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>登录的索引模板<br>
+PUT _template/login-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;login-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;regtime&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;lv&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+},<br>
+&quot;rest_coin&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>消耗的索引模板<br>
+PUT _template/cost-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;cost-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;cost&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+},<br>
+&quot;itemid&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>新手引导进度索引模板<br>
+PUT _template/guide-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;guide-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;process&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>卡牌升级索引模板<br>
+PUT _template/cardlevelup-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;cardlevelup-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;cardid&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+},<br>
+&quot;lvto&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>产出的索引模板<br>
+PUT _template/output-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;output-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;itemid&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+},<br>
+&quot;number&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+<p>充值的索引模板<br>
+PUT _template/charge-*<br>
+{<br>
+&quot;index_patterns&quot;: [&quot;charge-*&quot;],<br>
+&quot;settings&quot;:{<br>
+&quot;number_of_shards&quot;:5<br>
+},<br>
+&quot;mappings&quot;:{<br>
+&quot;properties&quot;:{<br>
+&quot;logtype&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;uid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;os&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;channel&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;version&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;udid&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;source&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;timestamp&quot;:{<br>
+&quot;type&quot;:&quot;date&quot;<br>
+},<br>
+&quot;networkType&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;ip&quot;:{<br>
+&quot;type&quot;:&quot;ip&quot;<br>
+},<br>
+&quot;area&quot;:{<br>
+&quot;type&quot;:&quot;keyword&quot;<br>
+},<br>
+&quot;money&quot;:{<br>
+&quot;type&quot;:&quot;integer&quot;<br>
+}<br>
+}<br>
+}<br>
+}</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[logstash根据message中的不同类型的日志输出到不同的es中]]></title>
         <id>https://xiaomanbaba.top/post/logstash-gen-ju-message-zhong-de-bu-tong-lei-xing-de-ri-zhi-shu-chu-dao-bu-tong-de-es-zhong/</id>
