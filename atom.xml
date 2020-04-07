@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://xiaomanbaba.top</id>
     <title>开发日记</title>
-    <updated>2020-04-07T09:33:37.744Z</updated>
+    <updated>2020-04-07T12:15:00.463Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://xiaomanbaba.top"/>
     <link rel="self" href="https://xiaomanbaba.top/atom.xml"/>
@@ -95,7 +95,8 @@ PUT _template/reg-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -140,7 +141,8 @@ PUT _template/login-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -194,7 +196,8 @@ PUT _template/cost-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -245,7 +248,8 @@ PUT _template/guide-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -293,7 +297,8 @@ PUT _template/cardlevelup-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -344,7 +349,8 @@ PUT _template/output-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -395,7 +401,8 @@ PUT _template/charge-*<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
 },<br>
 &quot;timestamp&quot;:{<br>
-&quot;type&quot;:&quot;date&quot;<br>
+&quot;type&quot;:&quot;date&quot;,<br>
+&quot;format&quot;:&quot;epoch_second&quot;<br>
 },<br>
 &quot;networkType&quot;:{<br>
 &quot;type&quot;:&quot;keyword&quot;<br>
@@ -412,6 +419,7 @@ PUT _template/charge-*<br>
 }<br>
 }<br>
 }</p>
+<p>注意，这里的date支持三种模式，一种是字符串的日期表示，一种是从1970年到现在的毫秒数，一种是从1970年到现在的秒数，之前我没设置format的这个字段，于是默认就是毫秒，导致结果不太准确。 这里设置了format:epoch_second就是秒的形式来设置的。</p>
 ]]></content>
     </entry>
     <entry>
