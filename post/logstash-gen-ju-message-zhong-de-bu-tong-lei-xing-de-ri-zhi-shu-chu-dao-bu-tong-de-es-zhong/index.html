@@ -1,0 +1,298 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>logstash根据message中的不同类型的日志输出到不同的es中 | 开发日记</title>
+<link rel="shortcut icon" href="https://xiaomanbaba.top/favicon.ico?v=1656502017211">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xiaomanbaba.top/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="logstash根据message中的不同类型的日志输出到不同的es中 | 开发日记 - Atom Feed" href="https://xiaomanbaba.top/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="当我们从beats输入数据后，然后通过grok把需要的字段抽取出来，然后输出到es中，下面是简单的一个配置文件
+input {
+beats {
+port =&gt; &quot;5044&quot;
+}
+}
+filter {
+grok {
+..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xiaomanbaba.top">
+  <img class="avatar" src="https://xiaomanbaba.top/images/avatar.png?v=1656502017211" alt="">
+  </a>
+  <h1 class="site-title">
+    开发日记
+  </h1>
+  <p class="site-description">
+    思绪随风飘，散落在这里
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              logstash根据message中的不同类型的日志输出到不同的es中
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-04-01
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>当我们从beats输入数据后，然后通过grok把需要的字段抽取出来，然后输出到es中，下面是简单的一个配置文件<br>
+input {<br>
+beats {<br>
+port =&gt; &quot;5044&quot;<br>
+}<br>
+}</p>
+<p>filter {<br>
+grok {<br>
+match =&gt; { &quot;message&quot; =&gt; &quot;uid:%{WORD:uid}[T ]channel:%{WORD:channel}[T ]os:%{WORD:os}[T ]money:%{WORD:money}[T ]timestamp:%{WORD:timestamp}&quot;}<br>
+}</p>
+<p>}</p>
+<p>output {</p>
+<pre><code>elasticsearch {
+	hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+	index =&gt; &quot;recharge-%{+YYYY.MM.dd}&quot;
+}
+
+stdout { codec =&gt; rubydebug }
+</code></pre>
+<p>}</p>
+<h1 id="geoip">geoip {</h1>
+<h1 id="source-clientip">source =&gt; &quot;clientip&quot;</h1>
+<h1 id="">}</h1>
+<p>#https://www.elastic.co/guide/en/logstash/current/advanced-pipeline.html</p>
+<p>目前有一个需求，现在我们的业务日志是存放在一个日志文件中，然后每行日志里面有一个logtype的字段指明日志的类型。这就需要我们filter的时候匹配到各种日志格式，然后根据logtype来分发到不同的index中。</p>
+<p>看下面的例子：</p>
+<p>我们的数据源是这个：<br>
+[2020/04/01 19:49:00 CST] [DEFAULT] [DEBG] (main.addUser:172) logtype:reg uid:10000 os:web channel:meizu version:1 udid:g8tnwtu0k7qdcc80 source:8 timestamp:1585741740 networkType:5g ip:205.48.79.22 area:10</p>
+<p>grok匹配的模式是这个：<br>
+logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}</p>
+<p>然后在output节点可以根据某些字段来处理不同的逻辑，最后我们的配置文件为：<br>
+input {<br>
+beats {<br>
+port =&gt; &quot;5044&quot;<br>
+}<br>
+}</p>
+<p>filter {<br>
+grok {<br>
+match =&gt; { &quot;message&quot; =&gt; [<br>
+#充值<br>
+&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}[T ]money:%{WORD:money}&quot;,</p>
+<pre><code>		#道具产出
+		&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}[T ]itemid:%{WORD:cardid}[T ]number:%{WORD:lvto}&quot;,
+
+		#卡牌升级
+		&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}[T ]cardid:%{WORD:cardid}[T ]lvto:%{WORD:lvto}&quot;,
+
+		#新手引导
+		&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}[T ]process:%{WORD:process}&quot;,
+
+
+		#金币消耗
+		&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}[T ]cost:%{WORD:cost}[T ]itemid:%{WORD:itemid}&quot;,
+
+
+		#登录login
+		&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}[T ]regtime:%{WORD:regtime}[T ]lv:%{WORD:lv}[T ]rest_coin:%{WORD:rest_coin}&quot;,
+
+
+		#注册，这个要放最后,不然前后的都可以匹配 reg
+		&quot;logtype:%{WORD:logtype}[T ]uid:%{WORD:uid}[T ]os:%{WORD:os}[T ]channel:%{WORD:channel}[T ]version:%{WORD:version}[T ]udid:%{WORD:udid}[T ]source:%{WORD:source}[T ]timestamp:%{WORD:timestamp}[T ]networkType:%{WORD:networkType}[T ]ip:%{IP:ip}[T ]area:%{WORD:area}&quot;
+	]
+	}
+}
+</code></pre>
+<p>}</p>
+<p>output {</p>
+<pre><code>if [logtype] == &quot;reg&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;reg-%{+YYYY.MM.dd}&quot;
+	}
+}
+if [logtype] == &quot;login&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;login-%{+YYYY.MM.dd}&quot;
+	}
+}
+if [logtype] == &quot;cost&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;cost-%{+YYYY.MM.dd}&quot;
+	}
+}
+if [logtype] == &quot;guide&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;guide-%{+YYYY.MM.dd}&quot;
+	}
+}
+if [logtype] == &quot;cardlevelup&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;cardlevelup-%{+YYYY.MM.dd}&quot;
+	}
+}
+if [logtype] == &quot;output&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;output-%{+YYYY.MM.dd}&quot;
+	}
+}
+if [logtype] == &quot;charge&quot;{
+	elasticsearch {
+		hosts =&gt; [&quot;http://192.168.1.29:9200&quot;]
+		index =&gt; &quot;charge-%{+YYYY.MM.dd}&quot;
+	}
+}
+
+
+stdout { codec =&gt; rubydebug }
+</code></pre>
+<p>}</p>
+<h1 id="geoip-2">geoip {</h1>
+<h1 id="source-clientip-2">source =&gt; &quot;clientip&quot;</h1>
+<h1 id="-2">}</h1>
+<p>#https://www.elastic.co/guide/en/logstash/current/advanced-pipeline.html</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#geoip">geoip {</a></li>
+<li><a href="#source-clientip">source =&gt; &quot;clientip&quot;</a></li>
+<li><a href="#">}</a></li>
+<li><a href="#geoip-2">geoip {</a></li>
+<li><a href="#source-clientip-2">source =&gt; &quot;clientip&quot;</a></li>
+<li><a href="#-2">}</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xiaomanbaba.top/post/this-yi-zhi-zhi-xiang-qian-yi-ge-dui-xiang/">
+              <h3 class="post-title">
+                this 一直指向前一个对象
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://xiaomanbaba.top/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
